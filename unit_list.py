@@ -38,5 +38,17 @@ unit_list = {
     'km': {
             'type': 'length',
             'mult': 25.4e-6
+            },
+    's': {
+            'type': 'time',
+            'mult': 1/1000
+            },
+    'min': {
+            'type': 'time',
+            'mult': 1/60000
+            },
+    'hr': {
+            'type': 'time',
+            'mult': 1/3600000
             }
     }

@@ -9,6 +9,7 @@ class Unit:
         else:
             self.value = float(num_str)
             self.unit = unit
+        self.unit_type = ul[self.unit]['type']
 
     def __str__(self):
         return f'{self.value} {self.unit}'
@@ -16,11 +17,17 @@ class Unit:
     def __repr__(self):
         return __str__()
 
-    def __add__(self, new_unit):
-        return Unit(self.value + new_unit.convert(self.unit).value, self.unit)
+    def __add__(self, addend):
+        if self.unit_type == addend.unit_type:
+            return Unit(self.value + addend.convert(self.unit).value, self.unit)
+        else:
+            raise TypeError('The two values do not have matching unit types for addition')
 
-    def __sub__(self, new_unit):
-        return Unit(self.value - new_unit.convert(self.unit).value, self.unit)
+    def __sub__(self, subtrahend):
+        if self.unit_type == subtrahend.unit_type:
+            return Unit(self.value - subtrahend.convert(self.unit).value, self.unit)
+        else:
+            raise TypeError('The two values do not have matching unit types for subtraction')
     
     def convert(self, to_unit: str, inplace=False):
         '''

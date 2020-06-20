@@ -5,17 +5,19 @@ class Unit:
     def __init__(self, num_str, unit=None):
         if isinstance(num_str, str):
             self.value = float(re.match(r'^\d+', num_str)[0])
-            self.unit = re.search(r'\w+$', num_str)[0]
         else:
             self.value = float(num_str)
-            self.unit = unit
-        self.unit_type = ul[self.unit]['type']
+        self.unit = re.findall(r'[a-zA-Z]+', unit or num_str)
+        try:
+            self.unit_type = [ul[unit]['type'] for unit in self.unit]
+        except  KeyError:
+            raise TypeError('The specified unit is not recognized.')
 
     def __str__(self):
         return f'{self.value} {self.unit}'
 
-    def __repr__(self):
-        return __str__()
+    # def __repr__(self):
+    #     return self.__str__()
 
     def __add__(self, addend):
         if self.unit_type == addend.unit_type:

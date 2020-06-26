@@ -1,5 +1,5 @@
 import re
-from unit_list import unit_list as ul
+from unit_list import unit_list
 
 class Unit:
     def __init__(self, num_str, unit=None):
@@ -9,15 +9,19 @@ class Unit:
             self.value = float(num_str)
         self.unit = re.findall(r'[a-zA-Z]+', unit or num_str)
         try:
-            self.unit_type = [ul[unit]['type'] for unit in self.unit]
+            self.unit_type = [unit_list[unit]['type'] for unit in self.unit]
         except  KeyError:
             raise TypeError('The specified unit is not recognized.')
+        # regex in progress: (?P<val>^\d*\.*\d*)|(?P<num>(?<!/)\w+)|(?P<den>(?<=/)\w+)
+
 
     def __str__(self):
         return f'{self.value} {self.unit}'
 
+
     # def __repr__(self):
     #     return self.__str__()
+
 
     def __add__(self, addend):
         if self.unit_type == addend.unit_type:
@@ -25,24 +29,26 @@ class Unit:
         else:
             raise TypeError('The two values do not have matching unit types for addition')
 
+
     def __sub__(self, subtrahend):
         if self.unit_type == subtrahend.unit_type:
             return Unit(self.value - subtrahend.convert(self.unit).value, self.unit)
         else:
             raise TypeError('The two values do not have matching unit types for subtraction')
-    
+
+
     def convert(self, to_unit: str, inplace=False):
         '''
         Converts the current unit to the specified unit
 
         Returns:
         A new Unit which has been converted to the specified unit.
-        If the 'inplace' argument is set to True, it will convert the 
+        If the 'inplace' argument is set to True, it will convert the
         current unit to the specified unit and return itself
         '''
         if inplace:
-            self.value = self.value / ul[self.unit]['mult'] * ul[to_unit]['mult'], 
+            self.value = self.value / unit_list[self.unit]['mult'] * unit_list[to_unit]['mult'],
             self.unit = to_unit
             return self
         else:
-            return Unit(self.value / ul[self.unit]['mult'] * ul[to_unit]['mult'], to_unit)
+            return Unit(self.value / unit_list[self.unit]['mult'] * unit_list[to_unit]['mult'], to_unit)

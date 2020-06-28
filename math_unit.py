@@ -2,21 +2,36 @@ import re
 from unit_list import unit_list
 
 class Unit:
-    def __init__(self, num_str, unit=None):
-        if isinstance(num_str, str):
-            self.value = float(re.match(r'^\d+', num_str)[0])
-        else:
-            self.value = float(num_str)
-        self.unit = re.findall(r'[a-zA-Z]+', unit or num_str)
-        try:
-            self.unit_type = [unit_list[unit]['type'] for unit in self.unit]
-        except  KeyError:
-            raise TypeError('The specified unit is not recognized.')
-        # regex in progress: (?P<val>^\d*\.*\d*)|(?P<num>(?<!/)\w+)|(?P<den>(?<=/)\w+)
+    def __init__(self, input_str):
+        # if isinstance(num_str, str):
+        #     self.value = float(re.match(r'^\d+', num_str)[0])
+        # else:
+        #     self.value = float(num_str)
+        # self.unit = re.findall(r'[a-zA-Z]+', unit or num_str)
+        self.value, self.numerator, self.denominator = self._parser(input_str)
+        # try:
+        #     self.unit_type = [unit_list[unit]['type'] for unit in self.unit]
+        # except  KeyError:
+        #     raise TypeError('The specified unit is not recognized.')
+
+    def _parser(self, input_str):
+        parse_re = r'(?P<val>^\d*\.*\d*)|(?P<num>(?<!/)\w+)|(?P<den>(?<=/)\w+)'
+        res = re.findall(parse_re, input_str)
+        numerators = []
+        denominators = []
+        for match in res:
+            if match[0]:
+                number = match[0]
+            elif match[1]:
+                numerators.append(match[1])
+            elif match[2]:
+                denominators.append(match[2])
+        return (number, numerators, denominators)
+
 
 
     def __str__(self):
-        return f'{self.value} {self.unit}'
+        return f'{self.value} {self.numerator}, {self.denominator}'
 
 
     # def __repr__(self):
